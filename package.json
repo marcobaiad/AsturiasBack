@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon index.js",
-    "start": "NODE_ENV=production node index.js",
+    "dev": "webpack-dev-server --open",
+    "start": "node index.js",
     "postinstall": "npm run build",
-    "build": "NODE_ENV=production webpack",
-    "server:dev": "webpack-dev-server"
+    "build": "NODE_ENV=production webpack -p",
+    "server:dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
