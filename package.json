@@ -4,11 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --open",
-    "start": "node index.js",
-    "postinstall": "npm run build",
-    "build": "NODE_ENV=production webpack -p",
-    "server:dev": "nodemon index.js"
+    "start": "node .",
+    "dev": "nodemon ."
   },
   "keywords": [],
   "author": "",
@@ -28,9 +25,5 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
-  },
-  "engines": {
-    "node": "12.18.0"
   }
-  
 }
