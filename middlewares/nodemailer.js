@@ -1,17 +1,38 @@
 const nodemailer = require('nodemailer');
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+
+const oauth2Client = new OAuth2(
+    "894073854290-i8rd35pp2gl4nn6cbfuhb9bdnt8kjk71.apps.googleusercontent.com",
+    "SpZw8BJc0V4sveCOE1-viCnj", // Client Secret
+    "https://developers.google.com/oauthplayground" // Redirect URL
+);
+
+oauth2Client.setCredentials({
+    refresh_token: "1//04FrhQZOlzGf9CgYIARAAGAQSNwF-L9Ir3StJEJKqof4AtrtbiFe1rGy1tDqJzPKjng8ChYkRM8QzwF1ytjEnu_hXYWbIrbhovUk"
+});
+
+const accessToken = oauth2Client.getAccessToken()
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.EMAIL, // TODO: your gmail account
-        pass: process.env.PASSWORD // TODO: your gmail password
+        type: "OAuth2",
+          user: "proyectofinalrestorant@gmail.com", 
+          clientId: "894073854290-i8rd35pp2gl4nn6cbfuhb9bdnt8kjk71.apps.googleusercontent.com",
+          clientSecret: "SpZw8BJc0V4sveCOE1-viCnj",
+          refreshToken: "1//04FrhQZOlzGf9CgYIARAAGAQSNwF-L9Ir3StJEJKqof4AtrtbiFe1rGy1tDqJzPKjng8ChYkRM8QzwF1ytjEnu_hXYWbIrbhovUk",
+          accessToken: accessToken
+
+        // user: process.env.EMAIL, // TODO: your gmail account
+        // pass: process.env.PASSWORD // TODO: your gmail password
     }
 });
 
 const sendNodeMail = (email, subject, msg) => {
     //La función recibe por parámetros los datos a llenar en el correo
     const mailOptions = {
-        from: `Asturias F & D <${process.env.EMAIL}>`, // email sender
+        from: `Asturias F & D <proyectofinalrestorant@gmail.com>`, // email sender
         to: email, // email receiver
         subject: subject,
         html: `
