@@ -1,11 +1,20 @@
-const path = require('path')
-const fs = require('fs')
+require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
 const mongoose = require('mongoose');
-const formidable = require('formidable')
+const formidable = require('formidable');
 const UploadsModel = require('../../models/update.model');
-const FoodsModel = require('../../models/foods.model')
+const FoodsModel = require('../../models/foods.model');
+const Cloudinary = require('cloudinary');
+
 
 exports.uploadImages = async (req, res) => {
+  Cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+  
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.resourceId)) {
       return res.status(400).json({ message: 'Foods not found.' });
@@ -27,7 +36,7 @@ exports.uploadImages = async (req, res) => {
   });
 
   form.onPart = part => {
-    if (['image/jpeg', 'image/png', 'image/gif'].indexOf(part.mime) !== -1) {
+    if (['image/jpeg', 'image/jpg', 'image/png', 'image/gif'].indexOf(part.mime) !== -1) {
       // Here is the invalid file types will be handled. 
       // You can listen on 'error' event
       // form._error(new Error('File type is not supported'));
@@ -37,7 +46,7 @@ exports.uploadImages = async (req, res) => {
 
   const validateFiles = files => {
 
-    let validfileTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    let validfileTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
     let result = true;
 
 
@@ -107,13 +116,16 @@ exports.uploadImages = async (req, res) => {
       }
     }
 
+    
     UploadsModel.findOneAndDelete({ resourceType: 'comida', 
-       resourceId: new mongoose.Types.ObjectId(req.params.resourceId) });
-
+    resourceId: new mongoose.Types.ObjectId(req.params.resourceId) });
+    const cloudResult = await Cloudinary.v2.uploader.upload(__filename)
+    console.log(__filename);
+    console.log(cloudResult);
     const upload = new UploadsModel({
       resourceType: 'comida',
       resourceId: new mongoose.Types.ObjectId(req.params.resourceId),
-      files: filesResult
+      files: filesResult,
     });
 
     try {
