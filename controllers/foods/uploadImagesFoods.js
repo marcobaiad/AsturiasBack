@@ -5,16 +5,17 @@ const mongoose = require('mongoose');
 const formidable = require('formidable');
 const UploadsModel = require('../../models/update.model');
 const FoodsModel = require('../../models/foods.model');
-const Cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 exports.uploadImages = async (req, res) => {
-  Cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-  });
   
+
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.resourceId)) {
       return res.status(400).json({ message: 'Foods not found.' });
@@ -98,7 +99,8 @@ exports.uploadImages = async (req, res) => {
             originalFileName: f.name,
             filename,
             sizeInBytes: f.size,
-            mimeType: f.type
+            mimeType: f.type,
+            path: f.path
           });
         });
       } else {
@@ -111,26 +113,26 @@ exports.uploadImages = async (req, res) => {
           originalFileName: fieldData.name,
           filename,
           sizeInBytes: fieldData.size,
-          mimeType: fieldData.type
+          mimeType: fieldData.type,
+          path: fieldData.path
         });
       }
-    }
+    }  
 
-    
     UploadsModel.findOneAndDelete({ resourceType: 'comida', 
     resourceId: new mongoose.Types.ObjectId(req.params.resourceId) });
-    const cloudResult = await Cloudinary.v2.uploader.upload(__filename)
-    console.log(__filename);
-    console.log(cloudResult);
     const upload = new UploadsModel({
       resourceType: 'comida',
       resourceId: new mongoose.Types.ObjectId(req.params.resourceId),
       files: filesResult,
     });
+    
+    /* 'static/' + upload.files[0].filename */
 
     try {
+      const result = await cloudinary.uploader.upload('public/' + upload.files[0].filename);
       await upload.save();
-      await FoodsModel.findByIdAndUpdate(req.params.resourceId, { imageUrl: 'static/' + upload.files[0].filename }, { new: true });
+      await FoodsModel.findByIdAndUpdate(req.params.resourceId, { imageUrl:  result.secure_url }, { new: true });
       res.send(upload);
     } catch (err) {
       res.status(500).send(err);

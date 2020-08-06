@@ -5,9 +5,11 @@ const morgan = require('morgan')
 const path = require('path');
 app.use(morgan('dev'))
 const cors = require('cors')
+const multer = require('multer');
 app.use(cors())
 app.use(express.json())
 require('./dataBase')
+
 
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
