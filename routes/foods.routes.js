@@ -2,6 +2,7 @@ const express = require('express');
 const { check } = require('express-validator')
 const authorize = require('../middlewares/authorize')
 const router = express.Router();
+const formData = require('express-form-data');
 
 const ControllerCreateFoods = require('../controllers/foods/createFoods')
 const ControllerReadFoodsTrue = require('../controllers/foods/readSeveralTrueFoods')
@@ -23,7 +24,8 @@ router.post('/',authorize('admin'), [
      
 ],
 ControllerCreateFoods.CreateFoods)
-router.post('/:resourceId/upload',authorize('admin'), ControllerFoodsImages.uploadImages);
+
+
 
 router.get('/todas',authorize('admin'), ControllerReadFoodsAll.GetFoods)
 router.get('/:id', ControllerReadFoods.GetOneFood)
@@ -34,4 +36,6 @@ router.put('/:id/nd',authorize('admin'), ControllerFoodsND.FoodsND)
 router.put('/:id',authorize('admin'), ControllerUpdateFoods.ModifyFoods)
 
 router.delete('/:id',authorize('admin'), ControllerDeleteFoods.RemoveFoods)
+router.use(formData.parse());
+router.post('/:resourceId/upload',authorize('admin'), ControllerFoodsImages.uploadImages);
 module.exports = router; 

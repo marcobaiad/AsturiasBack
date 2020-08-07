@@ -24,7 +24,8 @@
     "mongoose": "^5.9.18",
     "morgan": "^1.10.0",
     "multer": "",
-    "nodemailer": "^6.4.10"
+    "nodemailer": "^6.4.10",
+    "express-form-data": ""
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
