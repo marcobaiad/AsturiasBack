@@ -142,8 +142,8 @@ exports.uploadImages = async (req, res) => {
       console.log(results);
       // const result = await cloudinary.uploader.upload('public/' + upload.files[0].filename);
       // await upload.save();
-      await FoodsModel.findByIdAndUpdate(req.params.resourceId, { imageUrl:  results.secure_url }, { new: true });
-      res.send(results.secure_url);
+      await FoodsModel.findByIdAndUpdate(req.params.resourceId, { imageUrl:  results[0].secure_url }, { new: true });
+      res.send(results[0].secure_url);
     } catch (err) {
       res.status(500).send(err);
     }
