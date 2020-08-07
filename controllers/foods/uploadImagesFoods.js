@@ -129,8 +129,6 @@ exports.uploadImages = async (req, res) => {
     
     /* 'static/' + upload.files[0].filename */
 
-    console.log("Entrando al upload");
-
     try {
       const values = Object.values(req.files)
       console.log('Antes del promise');
