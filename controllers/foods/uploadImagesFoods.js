@@ -5,11 +5,11 @@ const mongoose = require('mongoose');
 const formidable = require('formidable');
 const UploadsModel = require('../../models/update.model');
 const FoodsModel = require('../../models/foods.model');
-const Cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 
 
 exports.uploadImages = async (req, res) => {
-  Cloudinary.config({
+  cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
@@ -98,7 +98,8 @@ exports.uploadImages = async (req, res) => {
             originalFileName: f.name,
             filename,
             sizeInBytes: f.size,
-            mimeType: f.type
+            mimeType: f.type,
+            path: f.path
           });
         });
       } else {
@@ -111,17 +112,19 @@ exports.uploadImages = async (req, res) => {
           originalFileName: fieldData.name,
           filename,
           sizeInBytes: fieldData.size,
-          mimeType: fieldData.type
+          mimeType: fieldData.type,
+          path: fieldData.path
         });
       }
     }
-
     
+    const subircloud = async () => {
+      const cloudResult = await cloudinary.v2.uploader.upload(filesResult.path);
+      res.send(cloudResult);
+    }
+
     UploadsModel.findOneAndDelete({ resourceType: 'comida', 
     resourceId: new mongoose.Types.ObjectId(req.params.resourceId) });
-    const cloudResult = await Cloudinary.v2.uploader.upload(__filename)
-    console.log(__filename);
-    console.log(cloudResult);
     const upload = new UploadsModel({
       resourceType: 'comida',
       resourceId: new mongoose.Types.ObjectId(req.params.resourceId),
@@ -130,6 +133,7 @@ exports.uploadImages = async (req, res) => {
 
     try {
       await upload.save();
+      await subircloud();
       await FoodsModel.findByIdAndUpdate(req.params.resourceId, { imageUrl: 'static/' + upload.files[0].filename }, { new: true });
       res.send(upload);
     } catch (err) {
