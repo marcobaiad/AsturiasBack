@@ -9,6 +9,7 @@ const usuarioControllerLogout = require('../controllers/users/logoutUsers')
 const usuariosControllerReadSeveral = require('../controllers/users/readSeveralUser')
 const usuarioControllerReadOne = require('../controllers/users/readOneUser')
 const usuarioControllerDelete = require('../controllers/users/deleteUsers')
+const usuarioControllerEditUser = require('../controllers/users/EditUser')
 
 router.post('/login', [
     check('username', 'usuarioError: Campo Vacio.').notEmpty(),
@@ -26,6 +27,17 @@ router.post('/', [
     check('password', ' Campo Vacio. Contraseña').notEmpty(),
     check('password', 'la contraseña debe tener un minimo de 8 caracteres').isLength({ min: 8 }),
 ], usuarioControllerRegister.registerUser)
+
+router.put('/userEdit/:id', [
+    check('address', 'Ingresar un Mail Correcto').notEmpty(),
+    check('age', 'Campo Edad Vacio').notEmpty(),
+    check('phonenumber', 'Campo Celular Vacio').notEmpty(),
+    check('email', 'Campo Mail Vacio').notEmpty(),
+    check('email', 'Ingresar un Mail Correcto').isEmail(),
+    check('password', ' Campo Vacio. Contraseña').notEmpty(),
+    check('password', 'la contraseña debe tener un minimo de 8 caracteres').isLength({ min: 8 })
+], usuarioControllerEditUser.EditUser)
+
 
 router.get('/logout', authorize([ 'user', 'admin' ]), usuarioControllerLogout.logoutUser)
 router.get('/:id',authorize('user'), usuarioControllerReadOne.GetUser)
