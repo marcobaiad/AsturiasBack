@@ -15,7 +15,6 @@ cloudinary.config({
 
 exports.uploadImages = async (req, res) => {
   
-
   // try {
   //   if (!mongoose.Types.ObjectId.isValid(req.params.resourceId)) {
   //     return res.status(400).json({ message: 'Foods not found.' });

@@ -12,6 +12,7 @@ const usuarioControllerDelete = require('../controllers/users/deleteUsers')
 const emailRecoveryPass = require('../controllers/users/sendrecoveryPassUser')
 const recoveryPassResponse = require('../controllers/users/recoverypassresponse')
 
+const usuarioControllerEditUser = require('../controllers/users/EditUser')
 
 router.post('/login', [
     check('username', 'usuarioError: Campo Vacio.').notEmpty(),
@@ -42,6 +43,22 @@ router.put('/recoverypassresponse/:resetLink', [
 router.get('/logout', authorize(['user', 'admin']), usuarioControllerLogout.logoutUser)
 router.get('/:id', authorize('user'), usuarioControllerReadOne.GetUser)
 router.get('/', authorize('admin'), usuariosControllerReadSeveral.GetUsers)
+
+router.put('/userEdit/:id', [
+    check('address', 'Ingresar un Mail Correcto').notEmpty(),
+    check('age', 'Campo Edad Vacio').notEmpty(),
+    check('phonenumber', 'Campo Celular Vacio').notEmpty(),
+    check('email', 'Campo Mail Vacio').notEmpty(),
+    check('email', 'Ingresar un Mail Correcto').isEmail(),
+    check('password', ' Campo Vacio. Contraseña').notEmpty(),
+    check('password', 'la contraseña debe tener un minimo de 8 caracteres').isLength({ min: 8 })
+], usuarioControllerEditUser.EditUser)
+
+
+router.get('/logout', authorize([ 'user', 'admin' ]), usuarioControllerLogout.logoutUser)
+router.get('/:id',authorize('user'), usuarioControllerReadOne.GetUser)
+router.get('/',authorize('admin'), usuariosControllerReadSeveral.GetUsers) 
+
 
 router.delete('/:id', authorize('admin'), usuarioControllerDelete.DeleteUser)
 

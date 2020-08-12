@@ -14,7 +14,7 @@ const OrderSchema = new mongoose.Schema({
 
     
     amountTopay:{
-        type: Number,
+        type: String,
         trim: true
     },
 
@@ -29,9 +29,7 @@ const OrderSchema = new mongoose.Schema({
     },
 
     state:{
-        type: String,
-        required:true,
-        default: 'Pendiente'
+        type: String
     },
 
     score:{
